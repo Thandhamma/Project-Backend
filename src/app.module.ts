@@ -4,6 +4,7 @@ import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
+import { ProfileController } from './profile/profile.controller';
 
 @Module({
   imports: [
@@ -20,5 +21,6 @@ import { UserModule } from './user/user.module';
     AuthModule,
     UserModule,
   ],
+  controllers: [ProfileController],
 })
 export class AppModule {}
