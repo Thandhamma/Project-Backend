@@ -1,55 +1,51 @@
 import { useState } from 'react';
-import './App.css'; // You can add global styles here if needed
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './App.css'; // สำหรับ Global Styles
 
-// --- 1. Import all your components ---
-import Header from './componentsHome/Header';
-import HeroSection from './componentsHome/HeroSection';
-import Footer from './componentsHome/Footer';
-import LoginModal from './componentsHome/LoginModal'; // Corrected component name
+// --- 1. Import Page และ Component ---
+// ❌ ลบ Header ออกจากตรงนี้ เพราะเราจะไปเรียกใช้ในแต่ละหน้าแทน
+// import Header from './componentsHome/Header'; 
+import ProductPage from './componentsProduct/ProductPage';
+import LoginModal from './componentsHome/LoginModal';
+import HomePage from './page/homePage';
 
+// App คือคอมโพเนนต์หลักที่จัดการทุกอย่าง
 function App() {
-  // --- 2. State Management ---
-  // This state lives in the highest-level component (App)
-  // so it can be shared between Header (to open) and LoginModal (to close).
+  // --- State และ Functions ยังคงอยู่ที่นี่ เพราะเป็นการจัดการส่วนกลาง ---
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // --- Handler Functions ---
-  // Function to open the modal, which we will pass to the Header
   const handleLoginClick = () => {
     setIsModalOpen(true);
   };
 
-  // Function to close the modal, which we will pass to the LoginModal
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
+  // 🚀 **สำคัญ:** ตอนนี้แต่ละหน้า (HomePage, ProductPage) 
+  // จะต้องรับฟังก์ชัน handleLoginClick ไปส่งต่อให้ Header ของตัวเอง
+  // เราจะส่ง props ผ่าน element ของ Route แบบนี้
+  const passPropsToHomePage = <HomePage onLoginClick={handleLoginClick} />;
+  const passPropsToProductPage = <ProductPage onLoginClick={handleLoginClick} />;
+
   return (
-    // Use a React Fragment (<>) or a div to wrap all components
-    <div className="flex flex-col min-h-screen">
-      {/* --- 3. Component Assembly & Prop Drilling --- */}
+    <BrowserRouter>
+      <div className="flex flex-col min-h-screen font-sans">
+        {/* ❌ Header ถูกย้ายออกไปจากตรงนี้แล้ว */}
 
-      {/* The Header component receives the 'handleLoginClick' function as a prop.
-        When the login button inside Header is clicked, it will call this function,
-        which in turn changes the state in this App component.
-      */}
-      <Header onLoginClick={handleLoginClick} onNavigate={() => { }} />
+        {/* Routes จะทำหน้าที่สลับ "ทั้งหน้า" ซึ่งแต่ละหน้าจะมี Header ของตัวเอง */}
+        <Routes>
+          <Route path="/" element={passPropsToHomePage} />
+          <Route path="/products" element={passPropsToProductPage} />
+          {/* <Route path="/about" element={<AboutPage onLoginClick={handleLoginClick} />} />
+                      <Route path="/contact" element={<ContactPage onLoginClick={handleLoginClick} />} />
+                    */}
+        </Routes>
 
-      {/* The main content of the page */}
-      <main className="flex-grow">
-        <HeroSection />
-      </main>
-
-      {/* The Footer component */}
-      <Footer />
-
-      {/* --- 4. Conditional Rendering ---
-        This is the magic part. The LoginModal component will ONLY be rendered
-        to the screen if 'isModalOpen' is true. We also pass the 'handleCloseModal'
-        function so the modal can close itself.
-      */}
-      {isModalOpen && <LoginModal onClose={handleCloseModal} />}
-    </div>
+        {/* LoginModal ยังอยู่ที่เดิม ถูกต้องแล้ว */}
+        {isModalOpen && <LoginModal onClose={handleCloseModal} />}
+      </div>
+    </BrowserRouter>
   );
 }
 
