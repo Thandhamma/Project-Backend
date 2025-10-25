@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-<<<<<<< HEAD
+
 import FilterSidebar from './FilterSidebar.js'; // 👈 1. Import คอมโพเนนต์ใหม่
-=======
+
 import FilterSidebar from '../componentsProduct/FilterSidebar'; // 👈 1. Import คอมโพเนนต์ใหม่
->>>>>>> c2a61a4f39fec32c86cd813e2b6eb6d18c115d39
+
 
 // --- Interfaces and Mock Data ---
 
 // ✍️ กำหนดหน้าตาของข้อมูลสินค้า
 interface Product {
-<<<<<<< HEAD
+
   id: number;
   name: string;
   price: number;
@@ -17,7 +17,7 @@ interface Product {
   rating: number; // e.g., 4.5
   tags: string[];
   // ... other properties from data-* attributes
-=======
+
     id: number;
     name: string;
     price: number;
@@ -25,12 +25,12 @@ interface Product {
     rating: number; // e.g., 4.5
     tags: string[];
     // ... other properties from data-* attributes
->>>>>>> c2a61a4f39fec32c86cd813e2b6eb6d18c115d39
+
 }
 
 // 📦 สร้างข้อมูลสินค้าจำลอง (ควรดึงมาจาก API หรือ Redux ในแอปจริง)
 const mockProducts: Product[] = [
-<<<<<<< HEAD
+
   {
     id: 1,
     name: 'Wish Bear (L)',
@@ -83,7 +83,7 @@ const mockProducts: Product[] = [
   },
 ];
 
-=======
+
     { id: 1, name: 'Wish Bear (L)', price: 520, imageUrl: '/ImageForProject/wish-bear-large.png', rating: 4.0, tags: ['New arrival'] },
     { id: 2, name: 'Glumpy Bear (L)', price: 549, imageUrl: '/ImageForProject/glumpy-bear-large.png', rating: 3.5, tags: ['Limited'] },
     { id: 3, name: 'Bedtimes Bear (M)', price: 329, imageUrl: '/ImageForProject/bedtimes-bear-med.png', rating: 4.5, tags: ['Limited', 'New arrival'] },
@@ -93,12 +93,12 @@ const mockProducts: Product[] = [
 ];
 
 
->>>>>>> c2a61a4f39fec32c86cd813e2b6eb6d18c115d39
+
 // --- Child Components ---
 
 // ⭐️ Component สำหรับแสดงผลดาว Rating
 const StarRating = ({ rating }: { rating: number }) => {
-<<<<<<< HEAD
+
   const percentage = (rating / 5) * 100;
   return (
     <div className="flex items-center text-yellow-400 pl-1">
@@ -113,7 +113,7 @@ const StarRating = ({ rating }: { rating: number }) => {
       </div>
     </div>
   );
-=======
+
     const percentage = (rating / 5) * 100;
     return (
         <div className="flex items-center text-yellow-400 pl-1">
@@ -125,12 +125,12 @@ const StarRating = ({ rating }: { rating: number }) => {
             </div>
         </div>
     );
->>>>>>> c2a61a4f39fec32c86cd813e2b6eb6d18c115d39
+
 };
 
 // 🃏 Component สำหรับการ์ดสินค้าแต่ละชิ้น
 const ProductCard = ({ product }: { product: Product }) => {
-<<<<<<< HEAD
+
   return (
     <div className="product-card">
       <a
@@ -249,7 +249,7 @@ function ProductPage() {
 }
 
 export default ProductPage;
-=======
+
     return (
         <div className="product-card">
             <a href="#" className="block product-card-inner border border-gray-200 rounded-lg p-3 bg-white transition-all transform duration-200 hover:shadow-lg hover:-translate-y-1">
@@ -330,4 +330,3 @@ function ProductPage() {
 
 export default ProductPage;
 
->>>>>>> c2a61a4f39fec32c86cd813e2b6eb6d18c115d39
