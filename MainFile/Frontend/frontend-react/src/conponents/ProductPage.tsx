@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Header from '../componentsHome/Header';
-import Footer from '../componentsHome/Footer';
+import Header from '../conponents/Header';
+import Footer from '../conponents/Footer';
 import FilterSidebar from '../componentsProduct/FilterSidebar';
 
 // --- Interfaces and Mock Data ---

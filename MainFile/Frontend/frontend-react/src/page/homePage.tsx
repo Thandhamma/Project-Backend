@@ -1,7 +1,7 @@
 // 🚀 1. Import คอมโพเนนต์ที่จำเป็น
-import Header from '../componentsHome/Header'; // 👈 **เพิ่มบรรทัดนี้**
-import HeroSection from '../componentsHome/HeroSection';
-import Footer from '../componentsHome/Footer';
+import Header from '../conponents/Header'; // 👈 **เพิ่มบรรทัดนี้**
+import HeroSection from '../conponents/HeroSection';
+import Footer from '../conponents/Footer';
 
 // 🚀 2. สร้าง Page Component
 function HomePage() {
