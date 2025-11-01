@@ -6,6 +6,7 @@ import { User, UserDocument } from './user.schema';
 // เราควรสร้าง DTO (Data Transfer Object) เพื่อกำหนดโครงสร้างข้อมูล
 // สร้างไฟล์ src/user/dto/create-user.dto.ts แล้วใส่ class นี้เข้าไป
 export class CreateUserDto {
+  username: string;
   email: string;
   password: string;
   role: 'user' | 'admin';
@@ -30,9 +31,14 @@ export class UserService {
    * @param email อีเมลที่ต้องการค้นหา
    * @returns Document ของ User ที่เจอ หรือ null
    */
-  async findByEmail(email: string): Promise<UserDocument | null> {
-    // ใช้ .select('+password') เพื่อให้แน่ใจว่า field password จะถูกดึงมาด้วย
-    // แม้ว่าใน schema จะตั้งค่า { select: false } ไว้ก็ตาม (เป็น good practice)
-    return this.userModel.findOne({ email }).select('+password').exec();
+  async findByUsernameOrEmail(
+    identifier: string,
+  ): Promise<UserDocument | null> {
+    // ตรวจสอบว่าสิ่งที่ส่งมาเป็น Email หรือไม่
+    const isEmail = identifier.includes('@');
+
+    const query = isEmail ? { email: identifier } : { username: identifier };
+
+    return this.userModel.findOne(query).select('+password').exec();
   }
 }

@@ -1,5 +1,6 @@
 // src/product/dto/create-product.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsNumber,
@@ -13,7 +14,6 @@ export class CreateProductDto {
     example: 'Sample Product',
     description: 'Name of the product',
   })
-  // ใช้ ApiProperty เพื่อเพิ่มรายละเอียดใน Swagger
   @IsString({ message: 'Product name must be a string.' })
   @IsNotEmpty({ message: 'Product name should not be empty.' })
   name: string;
@@ -22,17 +22,27 @@ export class CreateProductDto {
     example: 99.99,
     description: 'Price of the product',
   })
-  // ใช้ ApiProperty เพื่อเพิ่มรายละเอียดใน Swagger
+  @Type(() => Number) // แปลงค่าจาก string → number ตอนรับจาก request body
   @IsNumber({}, { message: 'Price must be a number.' })
-  @IsPositive({ message: 'Price must be a positive number.' }) // ราคาควรเป็นค่าบวก
+  @IsPositive({ message: 'Price must be a positive number.' })
   @IsNotEmpty({ message: 'Price should not be empty.' })
   price: number;
 
-  @IsString()
-  @IsOptional() // field นี้ไม่จำเป็นต้องส่งมาก็ได้
-  image?: string; // image อาจเป็น URL
+  @ApiProperty({
+    example: 'uploads/product-image.jpg',
+    description: 'Path or URL of the product image',
+    required: false,
+  })
+  @IsString({ message: 'Image path must be a string.' })
+  @IsOptional()
+  image?: string;
 
-  @IsString()
-  @IsOptional() // field นี้ไม่จำเป็นต้องส่งมาก็ได้
+  @ApiProperty({
+    example: 'This is a short description of the product.',
+    description: 'Description of the product',
+    required: false,
+  })
+  @IsString({ message: 'Description must be a string.' })
+  @IsOptional()
   description?: string;
 }

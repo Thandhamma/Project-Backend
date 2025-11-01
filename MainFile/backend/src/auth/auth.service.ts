@@ -9,7 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 // แก้ไข import ให้ถูกต้อง
 import { UserService } from '../user/user.service';
-import { UserDocument } from 'src/user/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -19,16 +18,23 @@ export class AuthService {
   ) {}
 
   // ✅ Register User
-  async register(email: string, password: string) {
-    const existingUser = await this.userService.findByEmail(email);
-    if (existingUser) {
+  async register(username: string, email: string, password: string) {
+    const existingUserByEmail =
+      await this.userService.findByUsernameOrEmail(email);
+    if (existingUserByEmail) {
       throw new ConflictException('Email already exists');
+    }
+
+    const existingUserByUsername =
+      await this.userService.findByUsernameOrEmail(username);
+    if (existingUserByUsername) {
+      throw new ConflictException('Username already exists');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ⭐ ปรับตรงนี้ให้ส่งเป็น object ที่ตรงกับ DTO ที่เราสร้าง
     const newUser = await this.userService.create({
+      username,
       email,
       password: hashedPassword,
       role: 'user', // กำหนด role ที่นี่
@@ -40,21 +46,28 @@ export class AuthService {
   }
 
   // ✅ Login User
-  async login(email: string, password: string) {
-    // โค้ดส่วนนี้ถูกต้องแล้ว ไม่ต้องแก้ไข
-    const user = await this.userService.findByEmail(email);
+  async login(password: string, email?: string, username?: string) {
+    const identifier = email || username;
+    if (!identifier) {
+      throw new UnauthorizedException('Please provide email or username');
+    }
+
+    const user = await this.userService.findByUsernameOrEmail(identifier);
     if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: user._id, email: user.email, role: user.role };
+    const payload = { sub: user._id, username: user.username, role: user.role };
     const token = await this.jwtService.signAsync(payload);
 
-    return { access_token: token };
+    return {
+      access_token: token,
+      user: { id: user._id, username: user.username, email: user.email },
+    };
   }
 }

@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { ProfileController } from './profile/profile.controller';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProfileController } from './profile/profile.controller';
           throw new Error('MONGO_URI environment variable is not defined');
         })(),
     ),
+    OrdersModule,
     ProductsModule,
     AuthModule,
     UserModule,

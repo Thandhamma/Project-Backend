@@ -17,6 +17,9 @@ export class ProfileController {
     return {
       message: 'This is your user profile.',
       user: req.user, // ข้อมูล user ที่ได้จาก JwtStrategy
+      username: req.user.username,
+      role: req.user.role,
+      email: req.user.email,
     };
   }
 

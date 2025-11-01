@@ -7,9 +7,17 @@ import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
+
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads/', // URL เริ่มต้น
+  });
 
   app.use(helmet());
   // 👇 เพิ่มโค้ดส่วนนี้เข้าไป
@@ -20,6 +28,7 @@ async function bootstrap() {
 
   // ใช้ HttpExceptionFilter ทั่วทั้งแอปพลิเคชัน
   app.useGlobalFilters(new HttpExceptionFilter());
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // กำจัด properties ที่ไม่ได้ระบุใน DTO
@@ -48,6 +57,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
+  console.log('✅ Server running at http://localhost:3000');
 }
 bootstrap();

@@ -1,35 +1,57 @@
-// src/product/product.controller.ts
-
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { ProductsService } from './products.service';
 import {
-  ApiOperation,
-  ApiTags,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { ProductsService } from './products.service';
+import { CreateProductDto } from './dto/create-product.dto';
 
-@ApiTags('Products') // จัดกลุ่ม API ใน Swagger
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) {}
 
+  @Get()
+  findAll() {
+    return this.productsService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.productsService.findOne(id);
+  }
+
+  // ✅ ตรงนี้คือจุดสำคัญ
   @Post()
-  @UseGuards(AuthGuard('jwt')) // สมมุติว่า route นี้ต้อง login
-  @ApiOperation({ summary: 'Create a new product' })
-  @ApiResponse({
-    status: 201,
-    description: 'The product has been successfully created.',
-  })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @ApiResponse({ status: 401, description: 'Unauthorize. No token provided.' })
-  @ApiBearerAuth() // แสดงว่า endpoint นี้ต้องการ Bearer token
-  create(@Body() createProductDto: CreateProductDto) {
-    // ถ้าข้อมูลที่ส่งมาไม่ตรงตามกฎใน CreateProductDto
-    // NestJS จะโยน Error 400 Bad Request ให้โดยอัตโนมัติ
-    // โค้ดของเราจะทำงานก็ต่อเมื่อข้อมูลถูกต้องแล้วเท่านั้น
-    return this.productService.create(createProductDto);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = extname(file.originalname);
+          callback(null, `${uniqueName}${ext}`);
+        },
+      }),
+    }),
+  )
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createProductDto: CreateProductDto,
+  ) {
+    // ถ้ามีรูปให้เก็บชื่อไฟล์
+    if (file) {
+      console.log('📸 Uploaded file:', file.filename);
+      createProductDto.image = file.filename;
+      console.log('⚠️ No file uploaded');
+    }
+
+    return this.productsService.create(createProductDto);
   }
 }

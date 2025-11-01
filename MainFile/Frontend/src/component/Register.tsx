@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 const Register: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   // 1. เพิ่ม State สำหรับ Confirm Password
-  const [confirmPassword, setConfirmPassword] = useState('');
-  
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -19,22 +19,22 @@ const Register: React.FC = () => {
     // 2. เพิ่มการตรวจสอบ (Validation) ก่อนส่ง Request
     // ---------------------------------------------------
     if (username.length < 7 || username.length > 20) {
-      setError('Username ต้องมีความยาว 7-20 ตัวอักษร');
+      setError("Username ต้องมีความยาว 7-20 ตัวอักษร");
       return; // หยุดการทำงาน
     }
 
     if (password !== confirmPassword) {
-      setError('รหัสผ่านทั้งสองช่องไม่ตรงกัน');
+      setError("รหัสผ่านทั้งสองช่องไม่ตรงกัน");
       return; // หยุดการทำงาน
     }
     // ---------------------------------------------------
 
     // 1. เรียก API ของ Backend
     try {
-      const response = await fetch('http://localhost:3000/auth/register', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username,
@@ -45,16 +45,16 @@ const Register: React.FC = () => {
 
       if (response.ok) {
         // 2. ถ้าสมัครสำเร็จ, ไปหน้า Home (เพราะ Login เราเป็น Modal)
-        navigate('/'); // <-- แก้ไขจาก '/login' เป็น '/'
+        navigate("/"); // <-- แก้ไขจาก '/login' เป็น '/'
       } else {
         // 3. ถ้า Error (เช่น username ซ้ำ)
         const errorData = await response.json();
-        setError(errorData.message || 'สมัครสมาชิกไม่สำเร็จ');
+        setError(errorData.message || "สมัครสมาชิกไม่สำเร็จ");
       }
     } catch (err) {
       console.error(err); // ดู Error จริงๆ ใน Console
       // 4. (แก้ไข) เพิ่มคำใบ้เรื่อง CORS ใน catch
-      setError('ไม่สามารถเชื่อมต่อ Server ได้ (โปรดตรวจสอบ CORS บน Backend)');
+      setError("ไม่สามารถเชื่อมต่อ Server ได้ (โปรดตรวจสอบ CORS บน Backend)");
     }
   };
 
@@ -64,7 +64,7 @@ const Register: React.FC = () => {
         <h2 className="text-2xl font-bold text-center">Sign Up</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium">Username (7-20 characters)</label>
+            <label className="block text-sm font-medium">Username </label>
             <input
               type="text"
               value={username}
@@ -93,10 +93,12 @@ const Register: React.FC = () => {
               className="w-full px-3 py-2 border rounded-md"
             />
           </div>
-          
+
           {/* 3. เพิ่ม Input Field สำหรับ Confirm Password */}
           <div>
-            <label className="block text-sm font-medium">Confirm Password</label>
+            <label className="block text-sm font-medium">
+              Confirm Password
+            </label>
             <input
               type="password"
               value={confirmPassword}
@@ -105,7 +107,7 @@ const Register: React.FC = () => {
               className="w-full px-3 py-2 border rounded-md"
             />
           </div>
-          
+
           {/* 4. แสดง Error ถ้ามี */}
           {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
@@ -117,7 +119,7 @@ const Register: React.FC = () => {
           </button>
         </form>
         <p className="text-sm text-center">
-          มีบัญชีอยู่แล้ว?{' '}
+          มีบัญชีอยู่แล้ว?{" "}
           <Link to="/" className="text-pink-500 hover:underline">
             Login ที่นี่
           </Link>
